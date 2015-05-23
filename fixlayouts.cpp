@@ -70,14 +70,14 @@ void ConvertSelectedTextInActiveWindow(HKL hklSource, HKL hklTarget)
 			}
 		}
 
-		// restore the original clipboard data
-		RestoreClipboardData(&prevClipboardData);
-		FreeClipboardData(&prevClipboardData);
-
 		// free allocated memory
 		free(sourceText);
 		free(targetText);
 	}
+
+	// restore the original clipboard data
+	RestoreClipboardData(&prevClipboardData);
+	FreeClipboardData(&prevClipboardData);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
