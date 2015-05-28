@@ -307,4 +307,3 @@ void SendKeyCombo(BYTE vkModifier, BYTE vk, BOOL extended)
 		keybd_event(vkModifier, 0, KEYEVENTF_KEYUP, 0);
 	keybd_event(vk, 0, KEYEVENTF_KEYUP | (extended ? KEYEVENTF_EXTENDEDKEY : 0), 0);
 }
-
