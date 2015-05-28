@@ -423,21 +423,21 @@ LRESULT CALLBACK LowLevelHookProc(int nCode, WPARAM wParam, LPARAM lParam)
 	if(nCode < 0) return CallNextHookEx(g_hHook, nCode, wParam, lParam);
 
 	KBDLLHOOKSTRUCT* data = (KBDLLHOOKSTRUCT*)lParam;
-
-	BOOL ctrl = GetKeyState(VK_CONTROL) < 0;
 	BOOL caps = data->vkCode == VK_CAPITAL && wParam == WM_KEYDOWN;
 
 	// ignore injected keystrokes
-	if((data->flags & LLKHF_INJECTED) == 0)
+	if(caps && (data->flags & LLKHF_INJECTED) == 0)
 	{
+		BOOL ctrl = GetKeyState(VK_CONTROL) < 0;
+
 		// Handle CapsLock - only switch current layout
-		if(caps && !ctrl)
+		if(!ctrl)
 		{
 			SwitchLayout();
 			return 1;
 		}
 		// Handle Ctrl-CapsLock - switch current layout and convert text in current field
-		else if(caps && ctrl)
+		else
 		{
 			// We start SwitchLayoutAndConvertSelected in another thread since it simulates 
 			// keystrokes to copy and paste the teset which call back into this hook.
