@@ -81,7 +81,7 @@ void ConvertSelectedTextInActiveWindow(HKL hklSource, HKL hklTarget)
 // Converts a character from one keyboard layout to another
 WCHAR LayoutConvertChar(WCHAR ch, HKL hklSource, HKL hklTarget)
 {
-	// special handling for some ambivalent characters in hebrew layout
+	// special handling for some ambivalent characters in Hebrew layout
 	if(LOWORD(hklSource) == MAKELANGID(LANG_HEBREW, SUBLANG_HEBREW_ISRAEL) &&
 		LOWORD(hklTarget) == MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US))
 	{

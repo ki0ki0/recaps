@@ -407,7 +407,7 @@ HKL SwitchLayout()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Selects the entire current line and converts it to the current kwyboard layout
+// Selects the entire current line and converts it to the current keyboard layout
 void SwitchAndConvert(void*)
 {
 	SendKeyCombo(VK_CONTROL, 'A', TRUE);
@@ -440,7 +440,7 @@ LRESULT CALLBACK LowLevelHookProc(int nCode, WPARAM wParam, LPARAM lParam)
 		else
 		{
 			// We start SwitchLayoutAndConvertSelected in another thread since it simulates 
-			// keystrokes to copy and paste the teset which call back into this hook.
+			// keystrokes to copy and paste the test which call back into this hook.
 			// That isn't good..
 			_beginthread(SwitchAndConvert, 0, NULL);
 			return 1; // prevent windows from handling the keystroke
