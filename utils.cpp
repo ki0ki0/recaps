@@ -9,17 +9,17 @@ void ShowError(const WCHAR* message)
 	WCHAR buffer[BUFSIZE];
 
 	LPVOID errMessage;
-	FormatMessage( 
-		FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-		FORMAT_MESSAGE_FROM_SYSTEM | 
+	FormatMessage(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		FORMAT_MESSAGE_FROM_SYSTEM |
 		FORMAT_MESSAGE_IGNORE_INSERTS,
 		NULL,
 		GetLastError(),
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 		(LPTSTR)&errMessage,
 		0,
-		NULL 
-	);
+		NULL
+		);
 
 	buffer[0] = '\0';
 	wcscat_s(buffer, BUFSIZE, message);
@@ -37,11 +37,11 @@ void PrintDebugString(const char* format, ...)
 {
 	char buffer[2048];
 
-    va_list args;
-    va_start(args, format);
-    
-    vsprintf_s(buffer, 2048, format, args);
+	va_list args;
+	va_start(args, format);
+
+	vsprintf_s(buffer, 2048, format, args);
 	strcat_s(buffer, 2048, "\n");
-    
+
 	OutputDebugStringA(buffer);
 }
