@@ -424,7 +424,7 @@ LRESULT CALLBACK LowLevelHookProc(int nCode, WPARAM wParam, LPARAM lParam)
 
 	KBDLLHOOKSTRUCT* data = (KBDLLHOOKSTRUCT*)lParam;
 
-	BOOL ctrl = (GetKeyState(VK_CONTROL) & 0x80000000) > 0;
+	BOOL ctrl = GetKeyState(VK_CONTROL) < 0;
 	BOOL caps = data->vkCode == VK_CAPITAL && wParam == WM_KEYDOWN;
 
 	// ignore injected keystrokes

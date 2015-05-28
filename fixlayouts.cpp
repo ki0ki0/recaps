@@ -299,7 +299,7 @@ void SendKey(BYTE vk, BOOL extended)
 // Simulates a key combination (such as Ctrl+X) in the active window
 void SendKeyCombo(BYTE vkModifier, BYTE vk, BOOL extended)
 {
-	BOOL modPressed = (GetKeyState(vkModifier) & 0x80000000) > 0;
+	BOOL modPressed = GetKeyState(vkModifier) < 0;
 	if(!modPressed)
 		keybd_event(vkModifier, 0, 0, 0);
 	keybd_event(vk, 0, extended ? KEYEVENTF_EXTENDEDKEY : 0, 0);
