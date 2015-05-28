@@ -2,9 +2,6 @@
 #include "fixlayouts.h"
 #include "utils.h"
 
-#define HKL_HEBREW  (HKL)0x040D040D
-#define HKL_ENGLISH (HKL)0x04090409
-
 ///////////////////////////////////////////////////////////////////////////////
 // Converts the text in the active window from one keyboard layout to another
 // using the clipboard.
@@ -85,7 +82,8 @@ void ConvertSelectedTextInActiveWindow(HKL hklSource, HKL hklTarget)
 WCHAR LayoutConvertChar(WCHAR ch, HKL hklSource, HKL hklTarget)
 {
 	// special handling for some ambivalent characters in hebrew layout
-	if (hklSource == HKL_HEBREW && hklTarget == HKL_ENGLISH)
+	if(LOWORD(hklSource) == MAKELANGID(LANG_HEBREW, SUBLANG_HEBREW_ISRAEL) && 
+		LOWORD(hklTarget) == MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US))
 	{
 		switch (ch)
 		{
@@ -95,7 +93,8 @@ WCHAR LayoutConvertChar(WCHAR ch, HKL hklSource, HKL hklTarget)
 			case L',':  return L'\'';
 		}
 	}
-	else if (hklSource == HKL_ENGLISH && hklTarget == HKL_HEBREW)
+	else if(LOWORD(hklSource) == MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US) && 
+		LOWORD(hklTarget) == MAKELANGID(LANG_HEBREW, SUBLANG_HEBREW_ISRAEL))
 	{
 		switch (ch)
 		{
