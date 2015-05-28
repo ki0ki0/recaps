@@ -70,6 +70,7 @@ struct KeyboardLayoutInfo
 KeyboardLayoutInfo g_keyboardInfo = { 0 };
 BOOL g_modalShown = FALSE;
 HHOOK g_hHook = NULL;
+UINT g_uTaskbarRestart = 0;
 
 // Prototypes
 void ShowError(const WCHAR* message);
@@ -113,13 +114,14 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	wclx.hInstance = hInstance;
 	wclx.lpszClassName = WINDOWCLASS_NAME;
 	RegisterClassEx(&wclx);
-	HWND hMessageWindow = CreateWindow(WINDOWCLASS_NAME, 0, 0, 0, 0, 0, 0, HWND_MESSAGE, 0, hInstance, 0);
+	HWND hWindow = CreateWindow(WINDOWCLASS_NAME, NULL, 0, 0, 0, 0, 0, NULL, 0, hInstance, 0);
 
 	// Set hook to capture CapsLock
 	g_hHook = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelHookProc, GetModuleHandle(NULL), 0);
 
 	// Initialize
-	AddTrayIcon(hMessageWindow, 0, APPWM_TRAYICON, IDI_MAINFRAME, TITLE);
+	g_uTaskbarRestart = RegisterWindowMessage(L"TaskbarCreated");
+	AddTrayIcon(hWindow, 0, APPWM_TRAYICON, IDI_MAINFRAME, TITLE);
 	GetKeyboardLayouts(&g_keyboardInfo);
 	LoadConfiguration(&g_keyboardInfo);
 
@@ -132,9 +134,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	}
 
 	// Clean up
-	RemoveTrayIcon(hMessageWindow, 0);
+	RemoveTrayIcon(hWindow, 0);
 	UnregisterClass(WINDOWCLASS_NAME, hInstance);
-	DestroyWindow(hMessageWindow);
+	DestroyWindow(hWindow);
 	SaveConfiguration(&g_keyboardInfo);
 	UnhookWindowsHookEx(g_hHook);
 
@@ -158,6 +160,12 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		return 0;
 
 	default:
+		if(uMsg == g_uTaskbarRestart)
+		{
+			AddTrayIcon(hWnd, 0, APPWM_TRAYICON, IDI_MAINFRAME, TITLE);
+			return 0;
+		}
+
 		return DefWindowProc(hWnd, uMsg, wParam, lParam);
 	}
 }
