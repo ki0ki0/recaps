@@ -336,13 +336,13 @@ void SaveConfiguration(const KeyboardLayoutInfo* info)
 // Finds out which window has the focus
 HWND RemoteGetFocus()
 {
-	HWND hwnd = GetForegroundWindow();
-	DWORD remoteThreadId = GetWindowThreadProcessId(hwnd, NULL);
-	DWORD currentThreadId = GetCurrentThreadId();
-	AttachThreadInput(remoteThreadId, currentThreadId, TRUE);
-	HWND focused = GetFocus();
-	AttachThreadInput(remoteThreadId, currentThreadId, FALSE);
-	return focused;
+	GUITHREADINFO remoteThreadInfo;
+	if(!GetGUIThreadInfo(0, &remoteThreadInfo))
+	{
+		return NULL;
+	}
+
+	return remoteThreadInfo.hwndFocus ? remoteThreadInfo.hwndFocus : remoteThreadInfo.hwndActive;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
