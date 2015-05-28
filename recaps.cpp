@@ -337,6 +337,7 @@ void SaveConfiguration(const KeyboardLayoutInfo* info)
 HWND RemoteGetFocus()
 {
 	GUITHREADINFO remoteThreadInfo;
+	remoteThreadInfo.cbSize = sizeof(GUITHREADINFO);
 	if(!GetGUIThreadInfo(0, &remoteThreadInfo))
 	{
 		return NULL;
