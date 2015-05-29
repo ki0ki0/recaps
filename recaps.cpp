@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "resource.h"
 #include "trayicon.h"
 #include "fixlayouts.h"
+#include "utils.h"
 
 #define HELP_MESSAGE \
 	L"Recaps allows you to quickly switch the current\r\n"\
@@ -71,10 +72,6 @@ KeyboardLayoutInfo g_keyboardInfo = { 0 };
 BOOL g_modalShown = FALSE;
 HHOOK g_hHook = NULL;
 UINT g_uTaskbarRestart = 0;
-
-// Prototypes
-void ShowError(const WCHAR* message);
-void PrintDebugString(const char* format, ...);
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 int OnTrayIcon(HWND hWnd, WPARAM wParam, LPARAM lParam);
