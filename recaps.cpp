@@ -103,9 +103,14 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	DWORD result = WaitForSingleObject(mutex, 0);
 	if(result == WAIT_TIMEOUT)
 	{
+		CloseHandle(mutex);
 		MessageBox(NULL, L"Recaps is already running.", L"Recaps", MB_OK | MB_ICONINFORMATION);
 		return 1;
 	}
+
+	// Initialize
+	GetKeyboardLayouts(&g_keyboardInfo);
+	LoadConfiguration(&g_keyboardInfo);
 
 	// Create a fake window to listen to events
 	WNDCLASSEX wclx = { 0 };
@@ -114,16 +119,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	wclx.hInstance = hInstance;
 	wclx.lpszClassName = WINDOWCLASS_NAME;
 	RegisterClassEx(&wclx);
-	HWND hWindow = CreateWindow(WINDOWCLASS_NAME, NULL, 0, 0, 0, 0, 0, NULL, 0, hInstance, 0);
+	CreateWindow(WINDOWCLASS_NAME, NULL, 0, 0, 0, 0, 0, NULL, 0, hInstance, 0);
 
 	// Set hook to capture CapsLock
 	g_hHook = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelHookProc, GetModuleHandle(NULL), 0);
-
-	// Initialize
-	g_uTaskbarRestart = RegisterWindowMessage(L"TaskbarCreated");
-	AddTrayIcon(hWindow, 0, APPWM_TRAYICON, IDI_MAINFRAME, TITLE);
-	GetKeyboardLayouts(&g_keyboardInfo);
-	LoadConfiguration(&g_keyboardInfo);
 
 	// Handle messages
 	MSG msg;
@@ -134,11 +133,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	}
 
 	// Clean up
-	RemoveTrayIcon(hWindow, 0);
-	UnregisterClass(WINDOWCLASS_NAME, hInstance);
-	DestroyWindow(hWindow);
-	SaveConfiguration(&g_keyboardInfo);
 	UnhookWindowsHookEx(g_hHook);
+	UnregisterClass(WINDOWCLASS_NAME, hInstance);
+	SaveConfiguration(&g_keyboardInfo);
+	CloseHandle(mutex);
 
 	return 0;
 }
@@ -149,6 +147,11 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch(uMsg)
 	{
+	case WM_CREATE:
+		g_uTaskbarRestart = RegisterWindowMessage(L"TaskbarCreated");
+		AddTrayIcon(hWnd, 0, APPWM_TRAYICON, IDI_MAINFRAME, TITLE);
+		return 0;
+
 	case APPWM_TRAYICON:
 		return OnTrayIcon(hWnd, wParam, lParam);
 
@@ -156,6 +159,11 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		return OnCommand(hWnd, LOWORD(wParam), (HWND)lParam);
 
 	case WM_CLOSE:
+		DestroyWindow(hWnd);
+		return 0;
+
+	case WM_DESTROY:
+		RemoveTrayIcon(hWnd, 0);
 		PostQuitMessage(0);
 		return 0;
 
