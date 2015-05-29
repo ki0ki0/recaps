@@ -27,15 +27,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "fixlayouts.h"
 
 #define HELP_MESSAGE \
-    L"Recaps allows you to quickly switch the current\r\n"\
+	L"Recaps allows you to quickly switch the current\r\n"\
 	L"language using the Capslock key.\r\n"\
 	L"\r\n"\
 	L"Capslock changes the current keyboard laguange.\r\n"\
 	L"Ctrl-Capslock fixes text you typed in the wrong laguange.\r\n"\
 	L"Alt-Capslock is the old Capslock that lets you type in CAPITAL.\r\n"\
-    L"\r\n"\
-    L"http://www.gooli.org/blog/recaps\r\n\r\n"\
-    L"Eli Golovinsky, Israel 2008\r\n"
+	L"\r\n"\
+	L"http://www.gooli.org/blog/recaps\r\n\r\n"\
+	L"Eli Golovinsky, Israel 2008\r\n"
 
 #define HELP_TITLE \
     L"Recaps 0.6 - Retake your Capslock!"
