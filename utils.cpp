@@ -30,7 +30,6 @@ void ShowError(const WCHAR* message)
 	LocalFree(errMessage);
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // Prints an error message to the debugger
 void PrintDebugString(const char* format, ...)
@@ -44,4 +43,17 @@ void PrintDebugString(const char* format, ...)
 	strcat_s(buffer, 2048, "\n");
 
 	OutputDebugStringA(buffer);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Prints an error message to the debugger
+BOOL DoesCmdLineSwitchExists(const WCHAR* command)
+{
+	for(int i = 1; i < __argc; i++)
+	{
+		if(_wcsicmp(command, __wargv[i]) == 0)
+			return TRUE;
+	}
+
+	return FALSE;
 }

@@ -88,7 +88,7 @@ LRESULT CALLBACK LowLevelHookProc(int nCode, WPARAM wParam, LPARAM lParam);
 
 ///////////////////////////////////////////////////////////////////////////////
 // Program's entry point
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
 	UNREFERENCED_PARAMETER(hInstance);
 	UNREFERENCED_PARAMETER(hPrevInstance);
@@ -108,15 +108,19 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	// Initialize
 	GetKeyboardLayouts(&g_keyboardInfo);
 	LoadConfiguration(&g_keyboardInfo);
+	BOOL bShowTrayIcon = !DoesCmdLineSwitchExists(L"-no_icon");
 
-	// Create a fake window to listen to events
-	WNDCLASSEX wclx = { 0 };
-	wclx.cbSize = sizeof(wclx);
-	wclx.lpfnWndProc = &WindowProc;
-	wclx.hInstance = hInstance;
-	wclx.lpszClassName = WINDOWCLASS_NAME;
-	RegisterClassEx(&wclx);
-	CreateWindow(WINDOWCLASS_NAME, NULL, 0, 0, 0, 0, 0, NULL, 0, hInstance, 0);
+	if(bShowTrayIcon)
+	{
+		// Create a fake window to listen to events
+		WNDCLASSEX wclx = { 0 };
+		wclx.cbSize = sizeof(wclx);
+		wclx.lpfnWndProc = &WindowProc;
+		wclx.hInstance = hInstance;
+		wclx.lpszClassName = WINDOWCLASS_NAME;
+		RegisterClassEx(&wclx);
+		CreateWindow(WINDOWCLASS_NAME, NULL, 0, 0, 0, 0, 0, NULL, 0, hInstance, 0);
+	}
 
 	// Set hook to capture CapsLock
 	g_hHook = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelHookProc, GetModuleHandle(NULL), 0);
@@ -131,7 +135,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 	// Clean up
 	UnhookWindowsHookEx(g_hHook);
-	UnregisterClass(WINDOWCLASS_NAME, hInstance);
+	if(bShowTrayIcon)
+		UnregisterClass(WINDOWCLASS_NAME, hInstance);
 	SaveConfiguration(&g_keyboardInfo);
 	CloseHandle(mutex);
 
