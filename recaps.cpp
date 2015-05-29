@@ -298,7 +298,7 @@ void LoadConfiguration(KeyboardLayoutInfo* info)
 	HKEY hkey;
 	LONG result;
 
-	result = RegOpenKey(HKEY_CURRENT_USER, L"Software\\Recaps", &hkey);
+	result = RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\Recaps", 0, KEY_QUERY_VALUE, &hkey);
 
 	// Load current isUse value for each language
 	if(result == ERROR_SUCCESS)
@@ -313,9 +313,9 @@ void LoadConfiguration(KeyboardLayoutInfo* info)
 				info->inUse[i] = (BOOL)data;
 			}
 		}
-	}
 
-	RegCloseKey(hkey);
+		RegCloseKey(hkey);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -325,12 +325,7 @@ void SaveConfiguration(const KeyboardLayoutInfo* info)
 	HKEY hkey;
 	LONG result;
 
-	result = RegOpenKey(HKEY_CURRENT_USER, L"Software\\Recaps", &hkey);
-
-	if(result != ERROR_SUCCESS)
-	{
-		result = RegCreateKey(HKEY_CURRENT_USER, L"Software\\Recaps", &hkey);
-	}
+	result = RegCreateKeyEx(HKEY_CURRENT_USER, L"Software\\Recaps", 0, NULL, 0, KEY_SET_VALUE, NULL, &hkey, NULL);
 
 	// Save current isUse value for each language
 	if(result == ERROR_SUCCESS)
@@ -340,9 +335,9 @@ void SaveConfiguration(const KeyboardLayoutInfo* info)
 			DWORD data = info->inUse[i];
 			RegSetValueEx(hkey, info->names[i], 0, REG_DWORD, (CONST BYTE*)(&data), sizeof(DWORD));
 		}
-	}
 
-	RegCloseKey(hkey);
+		RegCloseKey(hkey);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
